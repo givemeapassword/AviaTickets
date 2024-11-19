@@ -27,3 +27,18 @@ def calculate_trip_cost():
         "total_cost": total_cost,
         "breakdown": breakdown
     })
+
+@main_bp.route('/search', methods=['GET'])
+def search():
+    query = request.args.get('query', '')  # Получаем строку поиска
+    if query:
+        # Поиск по странам и сезонам
+        countries = Country.query.filter(Country.country_name.ilike(f'%{query}%')).all()  # Поиск по имени страны
+        seasons = SeasonFactor.query.filter(SeasonFactor.season.ilike(f'%{query}%')).all()  # Поиск по сезону
+    else:
+        countries = []
+        seasons = []
+
+    # Возвращаем частичный HTML для вставки в модальное окно
+    return render_template('search_modal_content.html', query=query, countries=countries, seasons=seasons)
+

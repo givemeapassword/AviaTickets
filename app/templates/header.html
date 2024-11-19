@@ -7,9 +7,9 @@
         </h1>
 
         <!-- Поле поиска -->
-        <form class="d-flex ms-3 w-50" action="/search" method="GET">
+        <form id="searchForm" class="d-flex ms-3 w-50" action="/search" method="GET">
             <div class="input-group">
-                <input class="form-control" type="search" name="query" placeholder="Поиск..." aria-label="Поиск">
+                <input id="searchQuery" class="form-control" type="search" name="query" placeholder="Поиск..." aria-label="Поиск">
                 <button class="btn btn-light border-0" type="submit">
                     <i class="bi bi-search"></i> Поиск
                 </button>
@@ -24,6 +24,37 @@
     </div>
 </header>
 
+<!-- Модальное окно для отображения результатов поиска -->
+<div class="modal fade" id="searchModal" tabindex="-1" aria-labelledby="searchModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content" id="searchModalContent">
+            <!-- Контент модального окна будет загружен через JavaScript -->
+        </div>
+    </div>
+</div>
+
 <!-- Подключаем модальные окна -->
 {% include 'login.html' %}
 {% include 'register.html' %}
+
+<!-- Скрипты для динамической загрузки контента -->
+<script>
+    const searchForm = document.getElementById('searchForm');
+    searchForm.addEventListener('submit', function (event) {
+        event.preventDefault(); // Предотвращаем стандартную отправку формы
+
+        const query = document.getElementById('searchQuery').value;
+        const searchModal = new bootstrap.Modal(document.getElementById('searchModal'));  // Инициализация модального окна
+
+        fetch(`/search?query=${encodeURIComponent(query)}`)
+            .then(response => response.text())
+            .then(data => {
+                document.getElementById('searchModalContent').innerHTML = data;  // Вставляем HTML контент в модальное окно
+                searchModal.show();  // Показываем модальное окно
+            })
+            .catch(error => {
+                console.error('Ошибка при поиске:', error);
+                alert('Произошла ошибка при поиске.');
+            });
+    });
+</script>
