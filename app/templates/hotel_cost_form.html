@@ -1,0 +1,82 @@
+<!-- Форма для расчета стоимости проживания -->
+<section id="accommodation-form-section" class="trip-form-section p-4 mb-5 d-none">
+    <div class="card shadow-lg border-0">
+        <div class="card-body">
+            <h2 class="text-center mb-4">Рассчитайте стоимость проживания</h2>
+            <form id="accommodation-form">
+                <div class="row">
+                    <div class="col-md-4 mb-3">
+                        <label for="base_price" class="form-label">🏨 Базовая цена за ночь (₽)</label>
+                        <input type="number" class="form-control" id="base_price" placeholder="Например: 3000" required>
+                    </div>
+                    <div class="col-md-4 mb-3">
+                        <label for="discount_rate" class="form-label">💸 Скидка (%)</label>
+                        <input type="number" class="form-control" id="discount_rate" placeholder="Например: 10" required>
+                    </div>
+                    <div class="col-md-4 mb-3">
+                        <label for="tax_rate" class="form-label">📊 Налог (%)</label>
+                        <input type="number" class="form-control" id="tax_rate" placeholder="Например: 5" required>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-4 mb-3">
+                        <label for="service_fee" class="form-label">🛎 Сервисный сбор (₽)</label>
+                        <input type="number" class="form-control" id="service_fee" placeholder="Например: 500" required>
+                    </div>
+                    <div class="col-md-4 mb-3">
+                        <label for="number_of_nights" class="form-label">🕒 Количество ночей</label>
+                        <input type="number" class="form-control" id="number_of_nights" placeholder="Например: 5" required>
+                    </div>
+                </div>
+                <button type="submit" class="btn btn-primary w-100 btn-lg">✨ Рассчитать стоимость проживания</button>
+            </form>
+        </div>
+    </div>
+
+    <div id="hotel-results" class="d-none mt-4">
+        <h3 class="text-center mb-4">Результаты расчета стоимости проживания</h3>
+        <div class="table-responsive">
+            <table class="table table-bordered table-striped table-hover">
+                <thead class="table-primary">
+                    <tr>
+                        <th scope="col">Категория</th>
+                        <th scope="col">Стоимость</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><strong>Общая стоимость проживания</strong></td>
+                        <td class="text-success"><strong id="total-hotel-cost">0</strong> ₽</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Общая стоимость с ценой поездки</strong></td>
+                        <td class="text-success"><strong id="total-hotel-cost-all">0</strong> ₽</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+    <div class="container mt-4 text-center">
+        <button id="buy-ticket2" class="btn btn-success btn-lg">Хотите забронировать отель?</button>
+    </div>
+    <div class="modal fade" id="ticketModal2" tabindex="-1" aria-labelledby="ticketModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h5 class="modal-title" id="ticketModalLabel">Подтверждение</h5>
+              <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Закрыть"></button>
+            </div>
+            <div class="modal-body text-center">
+              <!-- Используем карточку для оформления сообщения -->
+              <div class="alert alert-success d-flex align-items-center justify-content-center" role="alert">
+                  <i class="bi bi-check-circle-fill" style="font-size: 2rem; margin-right: 10px;"></i>
+                  <strong>Вы заброниловали отель!</strong>
+              </div>
+          </div>
+            <div class="modal-footer">
+              <button type="button" class="btn btn-primary w-100" data-bs-dismiss="modal">Ок</button>
+            </div>
+          </div>
+        </div>
+      </div>
+</section>
