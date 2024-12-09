@@ -1,146 +1,139 @@
-$(document).ready(function() {
-    // Функция для отправки данных на сервер
-    function sendCalculationRequest(url, data, successCallback, errorCallback) {
+$(document).ready(function () {
+    // Универсальная функция отправки данных на сервер
+    const sendCalculationRequest = (url, data, successCallback, errorCallback) => {
         $.ajax({
-            url: url,
+            url,
             type: 'POST',
             contentType: 'application/json',
             data: JSON.stringify(data),
             success: successCallback,
-            error: errorCallback
+            error: errorCallback,
         });
-    }
+    };
 
-    // Функция для обновления результатов расчета стоимости
-    function updateCostResults(response) {
-        $('#results').removeClass('d-none');
-        $('#total-cost').text(response.total_cost);
-        $('#flight-cost').text(response.breakdown.flight);
-        $('#accommodation-cost').text(response.breakdown.accommodation);
-        $('#food-cost').text(response.breakdown.food);
-        $('#transport-cost').text(response.breakdown.transport);
-        $('#activities-cost').text(response.breakdown.activities);
-        $('#discount').text(response.breakdown.discount);
-    }
+    // Универсальная функция отображения модального окна
+    const showModal = (modalId) => {
+        const modal = new bootstrap.Modal(document.getElementById(modalId));
+        modal.show();
+    };
 
-    // Функция для отображения модального окна
-    function showModal(modalId) {
-        var myModal = new bootstrap.Modal(document.getElementById(modalId));
-        myModal.show();
-    }
-
-    // Обработчик отправки формы для расчета стоимости
-    $('#trip-form').submit(function(event) {
-        event.preventDefault(); // предотвращаем стандартное поведение формы
-
+    const updateCostResults = (response) => {
+        console.log("Ответ от сервера:", response);  // Логируем ответ
+    
+        if (response && response.total_cost && response.breakdown) {
+            $('#results').removeClass('d-none');
+            $('#total-cost').text(response.total_cost.toFixed(2)); // Общая стоимость
+            const mapping = {
+                accommodation: 'accommodation-cost',
+                flight: 'flight-cost',
+                food: 'food-cost',
+                transport: 'transport-cost',
+                activities: 'activities-cost',
+                discount: 'discount',
+            };
+            console.log("Разбивка стоимости:", response.breakdown);
+        
+            Object.entries(response.breakdown).forEach(([key, value]) => {
+                const elementId = `#${mapping[key] || key}`;
+                $(elementId).text(value.toFixed(2) || value);
+            });
+        } else {
+            alert("Ошибка: Неверный формат ответа от API.");
+        }
+    };
+    // Обработчик отправки формы расчета стоимости поездки
+    $('#trip-form').submit(function (event) {
+        event.preventDefault();
         const formData = {
             country: $('#country').val(),
             season: $('#season').val(),
-            duration: $('#duration').val(),
-            num_people: $('#num_people').val(),
-            additional_expenses: $('#additional_expenses').val()
+            duration: +$('#duration').val(),
+            num_people: +$('#num_people').val(),
+            additional_expenses: +$('#additional_expenses').val(),
         };
 
-        sendCalculationRequest('/api/calculate_trip_cost', formData, function(response) {
-            updateCostResults(response);
-            $('#accommodation-form-section').removeClass('d-none');
-        }, function(xhr) {
-            alert("Ошибка: " + xhr.responseJSON.error);
-        });
+        sendCalculationRequest(
+            '/api/calculate_trip_cost',
+            formData,
+            (response) => {
+                updateCostResults(response);
+                $('#accommodation-form-section').removeClass('d-none');
+            },
+            (xhr) => alert(`Ошибка: ${xhr.responseJSON?.error || "Неизвестная ошибка"}`)
+        );
     });
 
-    // Обработчик для кнопки "Хотите купить билет?"
-    $('#buy-ticket').click(function() {
-        // Открываем модальное окно с сообщением о покупке билета
-        showModal('ticketModal');
+    // Индивидуальные обработчики кнопок
+    $('#buy-ticket').click(function () {
+        showModal('ticketModal'); // Модальное окно для покупки билета
     });
 
-    // Обработчик для кнопки "Хотите купить билет?" (другая кнопка)
-    $('#buy-ticket2').click(function() {
-        showModal('ticketModal2');
+    $('#buy-ticket2').click(function () {
+        showModal('ticketModal2'); // Модальное окно для бронирования отеля
     });
 
-    // Обработчик для кнопки "Подробнее" (модальное окно с деталями)
-    $('.btn-details').click(function() {
-        const title = $(this).data('title');
-        const description = $(this).data('description');
-        const duration = $(this).data('duration');
-        const price = $(this).data('price');
-
+    // Обработчик кнопки "Подробнее"
+    $('.btn-details').click(function () {
         const detailsHtml = `
-            <h5>${title}</h5>
-            <p>${description}</p>
-            <p><strong>${duration}</strong></p>
-            <p><strong>${price}</strong></p>
+            <h5>${$(this).data('title')}</h5>
+            <p>${$(this).data('description')}</p>
+            <p><strong>${$(this).data('duration')}</strong></p>
+            <p><strong>${$(this).data('price')}</strong></p>
         `;
         $('#detailsModal .modal-body').html(detailsHtml);
         showModal('detailsModal');
     });
 
-    // Закрытие модального окна с возвратом на главную страницу
-    $('#closeModalBtn').click(function() {
-        window.location.href = '/';
-    });
+    // Закрытие модального окна и возврат на главную страницу
+    $('#closeModalBtn').click(() => (window.location.href = '/'));
 
-    // Загрузка курсов валют при загрузке страницы
-    function loadExchangeRates() {
-        const apiUrl = "https://api.exchangerate-api.com/v4/latest/RUB";
-
-        fetch(apiUrl)
-            .then(response => response.json())
-            .then(data => {
-                if (data && data.rates) {
-                    const rates = data.rates;
-                    $("#usd-rate").text(`${(1 / rates["USD"]).toFixed(1)} USD`);
-                    $("#eur-rate").text(`${(1 / rates["EUR"]).toFixed(1)} EUR`);
-                    $("#jpy-rate").text(`${(1 / rates["JPY"]).toFixed(1)} JPY`);
+    // Загрузка курсов валют
+    const loadExchangeRates = () => {
+        fetch("https://api.exchangerate-api.com/v4/latest/RUB")
+            .then((response) => response.json())
+            .then((data) => {
+                if (data?.rates) {
+                    $("#usd-rate").text(`${(1 / data.rates.USD).toFixed(1)} USD`);
+                    $("#eur-rate").text(`${(1 / data.rates.EUR).toFixed(1)} EUR`);
+                    $("#jpy-rate").text(`${(1 / data.rates.JPY).toFixed(1)} JPY`);
                 }
             })
-            .catch(error => {
-                console.error("Ошибка загрузки данных курса валют:", error);
+            .catch(() => {
                 $(".card-text").text("Не удалось загрузить данные");
+                console.error("Ошибка загрузки данных курса валют");
             });
-    }
+    };
 
-    loadExchangeRates();  // Вызываем функцию для загрузки данных курса валют
+    loadExchangeRates();
 
-    $('#accommodation-form').submit(function(event) {
-        event.preventDefault(); // предотвращаем стандартное поведение формы
-    
+    // Обработчик отправки формы расчета стоимости проживания
+    $('#accommodation-form').submit(function (event) {
+        event.preventDefault();
         const formData = {
-            base_price: $('#base_price').val(),        // Название поля должно совпадать с ожиданием API
-            discount_rate: $('#discount_rate').val(),
-            tax_rate: $('#tax_rate').val(),
-            service_fee: $('#service_fee').val(),
-            number_of_nights: $('#number_of_nights').val()
+            base_price: +$('#base_price').val(),
+            discount_rate: +$('#discount_rate').val(),
+            tax_rate: +$('#tax_rate').val(),
+            service_fee: +$('#service_fee').val(),
+            number_of_nights: +$('#number_of_nights').val(),
         };
-    
-        // Отправляем запрос на сервер
-        sendCalculationRequest('http://127.0.0.1:5000/api/calculate_price', formData, function(response) {
-            $('#hotel-results').removeClass('d-none');
-            $('#total-hotel-cost').text(response.total_price.toFixed(2)); // Используем поле "total_price" из ответа
-            $('#total-hotel-cost-all').text((response.total_price + parseFloat($('#total-cost').text())).toFixed(2));
-        }, function(xhr) {
-            // Обработка ошибок
-            if (xhr.responseJSON && xhr.responseJSON.error) {
-                alert("Ошибка: " + xhr.responseJSON.error);
-            } else {
-                alert("Произошла ошибка при расчете стоимости!");
-            }
-        });
-    });
-    
-    // Функция для отправки AJAX-запроса
-    function sendCalculationRequest(url, data, successCallback, errorCallback) {
-        $.ajax({
-            url: url,
-            type: 'POST',
-            contentType: 'application/json',
-            data: JSON.stringify(data),
-            success: successCallback,
-            error: errorCallback
-        });
-    }
-    
 
+        sendCalculationRequest(
+            '/api/calculate_price', // Новый URL, который обрабатывается Flask
+            formData,
+            (response) => {
+                if (response && response.total_price) {
+                    const totalCost = response.total_price.toFixed(2);
+                    $('#hotel-results').removeClass('d-none');
+                    $('#total-hotel-cost').text(totalCost);
+                    $('#total-hotel-cost-all').text((+totalCost + +$('#total-cost').text()).toFixed(2));
+                } else {
+                    alert("Ошибка: Неверный формат ответа от API.");
+                }
+            },
+            (xhr) => {
+                const errorMsg = xhr.responseJSON?.error || "Произошла ошибка при расчете стоимости!";
+                alert(`Ошибка: ${errorMsg}`);
+            }
+        );
+    });
 });
