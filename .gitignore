@@ -2,7 +2,6 @@
 .vscode/
 **avia_app/
 *.log
-.env
 *.pyc
 .dockerignore
 **/__pycache__/
