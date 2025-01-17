@@ -1,0 +1,9 @@
+.idea/
+.vscode/
+avia_app/
+*.log
+.env
+*.pyc
+.dockerignore
+**/__pycache__/
+__pycache__/

@@ -1,0 +1,38 @@
+
+services:
+  travel_api:
+    build: 
+      context: ./TravelExpenseAPI/
+    ports:
+      - "5000:80"
+    networks:
+      - travel_network
+
+  hotel_api:
+    build: 
+      context: ./HotelExpenseAPI/
+    ports:
+      - "5001:80"
+    networks:
+      - travel_network
+
+  travel_cost_web:
+    build: 
+      context: ./WebService/
+    ports:
+      - "5002:5002"
+    depends_on:
+      - travel_api
+      - hotel_api
+    networks:
+      - travel_network
+    environment:
+      - FLASK_APP=run.py
+      - FLASK_ENV=production
+      - DATABASE_URL=sqlite:///app.db
+      - API_TRAVEL=http://travel_api:80
+      - API_SAM=http://hotel_api:80
+
+networks:
+  travel_network:
+    driver: bridge
