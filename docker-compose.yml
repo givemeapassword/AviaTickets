@@ -1,3 +1,4 @@
+version: '3.8'
 
 services:
   travel_api:
@@ -7,6 +8,22 @@ services:
       - "5000:80"
     networks:
       - travel_network
+    healthcheck:
+      test: ["CMD", "sh", "-c", "nc -z 127.0.0.1 80"]
+      interval: 30s
+      retries: 3
+      start_period: 20s
+    env_file:
+      - ./WebService/.env
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "3"
+    restart: unless-stopped
+    environment:
+      - API_NAME=TravelExpenseAPI
+      - DEBUG=false
 
   hotel_api:
     build: 
@@ -15,6 +32,22 @@ services:
       - "5001:80"
     networks:
       - travel_network
+    healthcheck:
+      test: ["CMD", "sh", "-c", "nc -z 127.0.0.1 80"]
+      interval: 30s
+      retries: 3
+      start_period: 20s
+    env_file:
+      - ./WebService/.env
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "3"
+    restart: unless-stopped
+    environment:
+      - API_NAME=HotelExpenseAPI
+      - DEBUG=false
 
   travel_cost_web:
     build: 
@@ -22,16 +55,24 @@ services:
     ports:
       - "5002:5002"
     depends_on:
-      - travel_api
-      - hotel_api
+      travel_api:
+        condition: service_healthy
+      hotel_api:
+        condition: service_healthy
     networks:
       - travel_network
+    env_file:
+      - ./WebService/.env
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "3"
+    restart: unless-stopped
     environment:
-      - FLASK_APP=run.py
-      - FLASK_ENV=production
-      - DATABASE_URL=sqlite:///app.db
       - API_TRAVEL=http://travel_api:80
-      - API_SAM=http://hotel_api:80
+      - API_HOTEL=http://hotel_api:80
+      - DEBUG=false
 
 networks:
   travel_network:
