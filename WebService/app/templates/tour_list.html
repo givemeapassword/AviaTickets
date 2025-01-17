@@ -1,0 +1,82 @@
+<section class="tour-list mb-5">
+    {% include 'rate.html' %}
+
+    <h2 class="text-center mb-4">Популярные туры</h2>
+    <div class="row row-cols-1 row-cols-md-3 g-4">
+
+        <!-- Карточка 1: Тур в США -->
+        <div class="col">
+            <div class="card shadow-lg h-100 d-flex flex-column tour-card" id="tour-card-1">
+                <img src="https://s0.rbk.ru/v6_top_pics/media/img/4/37/756650198563374.jpg" class="card-img-top zoom-image" alt="США">
+                <div class="card-body flex-grow-1 d-flex flex-column">
+                    <h5 class="card-title">Тур в США</h5>
+                    <p class="card-text flex-grow-1">Посетите Нью-Йорк, Лас-Вегас и Гранд-Каньон, погрузитесь в атмосферу Голливуда и роскоши Лос-Анджелеса.</p>
+                    <button class="btn btn-primary mt-auto btn-details" 
+                            data-title="Тур в США" 
+                            data-description="Путешествие по крупным мегаполисам, включая Нью-Йорк, Лас-Вегас и Лос-Анджелес. Посещение Гранд-Каньона и национальных парков США." 
+                            data-duration="Продолжительность: 7 дней" 
+                            data-price="Цена: от $1000">
+                        Подробнее
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Карточка 2: Тур в Японию -->
+        <div class="col">
+            <div class="card shadow-lg h-100 d-flex flex-column tour-card" id="tour-card-2">
+                <img src="https://cdn.culture.ru/images/0d51a12a-18f8-58a4-8e87-34cb662f787e" class="card-img-top zoom-image" alt="Япония">
+                <div class="card-body flex-grow-1 d-flex flex-column">
+                    <h5 class="card-title">Тур в Японию</h5>
+                    <p class="card-text flex-grow-1">Откройте Токио, Киото и Осаку. Насладитесь традиционной культурой, уникальной кухней и красотой сакуры.</p>
+                    <button class="btn btn-primary mt-auto btn-details" 
+                            data-title="Тур в Японию" 
+                            data-description="Посетите современные мегаполисы Токио и Осаку, древние храмы Киото и горы Фудзи. Узнайте секреты японской кухни, включая суши и рамэн." 
+                            data-duration="Продолжительность: 10 дней" 
+                            data-price="Цена: от $1500">
+                        Подробнее
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Карточка 3: Тур во Францию -->
+        <div class="col">
+            <div class="card shadow-lg h-100 d-flex flex-column tour-card" id="tour-card-3">
+                <img src="https://assets.weforum.org/article/image/responsive_big_0NQECr3DnJfvRwDomIEUswvauuOd-8CrR5A9loomDX8.jpg" class="card-img-top zoom-image" alt="Франция">
+                <div class="card-body flex-grow-1 d-flex flex-column">
+                    <h5 class="card-title">Тур во Францию</h5>
+                    <p class="card-text flex-grow-1">Откройте для себя романтический Париж, Лазурный берег и волшебные замки Луары.</p>
+                    <button class="btn btn-primary mt-auto btn-details" 
+                            data-title="Тур во Францию" 
+                            data-description="Исследуйте Париж с его Эйфелевой башней, Монмартром и Лувром. Посетите Канны и Ниццу на Лазурном берегу. Насладитесь французской кухней и культурой." 
+                            data-duration="Продолжительность: 8 дней" 
+                            data-price="Цена: от $1200">
+                        Подробнее
+                    </button>
+                </div>
+            </div>
+        </div>
+        
+
+    </div>
+    <!-- Модальное окно для отображения подробностей -->
+<div class="modal fade" id="detailsModal" tabindex="-1" aria-labelledby="detailsModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="detailsModalLabel">Подробнее о туре</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Закрыть"></button>
+            </div>
+            <div class="modal-body">
+                <!-- Динамическое содержимое будет вставлено здесь -->
+            </div>
+            <div class="modal-footer">
+                <button id="closeModalBtn" type="button" class="btn btn-secondary" data-bs-dismiss="modal">Закрыть</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+    
+</section>

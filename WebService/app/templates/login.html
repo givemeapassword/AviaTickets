@@ -1,0 +1,27 @@
+
+<!-- Модальное окно для регистрации -->
+<div class="modal fade" id="registerModal" tabindex="-1" aria-labelledby="registerModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content shadow-lg border-0 rounded-3">
+          <div class="modal-header">
+              <h5 class="modal-title" id="registerModalLabel">Регистрация</h5>
+              <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+          </div>
+          <div class="modal-body">
+              <form id="register-form" method="POST">
+                  <div class="mb-4">
+                      <label for="register-username" class="form-label">Имя пользователя</label>
+                      <input type="text" class="form-control border-success shadow-sm" id="register-username" name="username" required>
+                  </div>
+                  <div class="mb-4">
+                      <label for="register-password" class="form-label">Пароль</label>
+                      <input type="password" class="form-control border-success shadow-sm" id="register-password" name="password" required>
+                  </div>
+                  <div class="d-grid gap-2 mb-4">
+                      <button type="submit" class="btn btn-success btn-lg">Зарегистрироваться</button>
+                  </div>
+              </form>
+          </div>
+      </div>
+  </div>
+</div>

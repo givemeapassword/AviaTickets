@@ -1,6 +1,6 @@
 .idea/
 .vscode/
-avia_app/
+**avia_app/
 *.log
 .env
 *.pyc

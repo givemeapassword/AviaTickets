@@ -1,0 +1,199 @@
+swagger: "2.0"
+info:
+  title: "API для расчёта стоимости поездки"
+  description: |
+    Добро пожаловать в API для расчёта стоимости путешествия!
+    Этот API помогает пользователям быстро вычислить стоимость поездки в разные страны, учитывая такие факторы, как:
+    - страна назначения
+    - сезон (лето, зима, межсезонье)
+    - продолжительность поездки
+    - дополнительные расходы
+    - количество человек в группе
+    
+    Вы можете также получить информацию о стоимости проживания, еды и транспорта для каждого сезона.
+  version: "1.0.0"
+host: "localhost"
+basePath: "/"
+schemes:
+  - "http"
+  - "https"
+paths:
+  /api/calculate_trip_cost:
+    post:
+      summary: "Рассчитать полную стоимость поездки"
+      description: |
+        Этот эндпоинт позволяет рассчитать полную стоимость поездки, включая авиабилеты, проживание, питание, транспорт и дополнительные расходы.
+        Приложение также поддерживает сезонные коэффициенты, которые могут влиять на стоимость в зависимости от сезона (лето, зима или межсезонье).
+      parameters:
+        - name: body
+          in: body
+          required: true
+          description: |
+            Тело запроса должно содержать информацию о поездке:
+            - Страна для путешествия
+            - Сезон (лето, зима или межсезонье)
+            - Продолжительность поездки в днях
+            - Дополнительные расходы
+            - Количество людей в группе (для групповых скидок)
+          schema:
+            type: object
+            required:
+              - country
+              - season
+              - duration
+              - additional_expenses
+              - num_people
+            properties:
+              country:
+                type: string
+                description: |
+                  Страна назначения. Например, 'USA', 'France', 'Japan'. Выберите страну из списка.
+                enum: ['USA', 'France', 'Japan']
+                example: 'USA'
+              season:
+                type: string
+                description: |
+                  Сезон для поездки. Возможные значения:
+                  - 'summer' (лето)
+                  - 'winter' (зима)
+                  - 'offseason' (межсезонье)
+                enum: ['summer', 'winter', 'offseason']
+                example: 'summer'
+              duration:
+                type: integer
+                description: |
+                  Продолжительность поездки в днях. Например, 7 — это 7 дней.
+                example: 7
+              additional_expenses:
+                type: integer
+                description: |
+                  Дополнительные расходы на активности, экскурсии, шопинг и другие нужды.
+                example: 300
+              num_people:
+                type: integer
+                description: |
+                  Количество людей в группе. Для более чем двух человек могут быть применены групповые скидки.
+                example: 4
+      responses:
+        200:
+          description: "Полная стоимость поездки с разбивкой по категориям."
+          schema:
+            type: object
+            properties:
+              total_cost:
+                type: number
+                format: float
+                description: "Общая стоимость поездки для указанной группы."
+                example: 8700.0
+              breakdown:
+                type: object
+                properties:
+                  flight:
+                    type: number
+                    format: float
+                    description: "Стоимость авиабилетов для всей группы."
+                    example: 2400.0
+                  accommodation:
+                    type: number
+                    format: float
+                    description: "Стоимость проживания для всей группы."
+                    example: 1400.0
+                  food:
+                    type: number
+                    format: float
+                    description: "Стоимость питания для всей группы."
+                    example: 420.0
+                  transport:
+                    type: number
+                    format: float
+                    description: "Стоимость транспорта для всей группы."
+                    example: 280.0
+                  activities:
+                    type: number
+                    format: float
+                    description: "Стоимость дополнительных расходов (активности, экскурсии и т.д.)."
+                    example: 300.0
+                  discount:
+                    type: number
+                    format: float
+                    description: "Групповая скидка, если применимо."
+                    example: 200.0
+        400:
+          description: "Ошибка ввода данных: Неверный формат данных."
+          schema:
+            type: object
+            properties:
+              error:
+                type: string
+                description: "Описание ошибки."
+                example: "Сезон не поддерживается"
+  /api/get_trip_cost_info:
+    get:
+      summary: "Получить информацию о стоимости поездки по стране и сезону"
+      description: |
+        Этот эндпоинт позволяет получить информацию о стоимости основных категорий расходов (авиабилеты, проживание, питание, транспорт) для выбранной страны и сезона.
+      parameters:
+        - name: country
+          in: query
+          required: true
+          type: string
+          description: "Страна, для которой требуется информация о стоимости."
+          enum: ['USA', 'France', 'Japan']
+          example: 'USA'
+        - name: season
+          in: query
+          required: true
+          type: string
+          description: "Сезон для которого требуется информация о стоимости."
+          enum: ['summer', 'winter', 'offseason']
+          example: 'summer'
+      responses:
+        200:
+          description: "Информация о стоимости для указанной страны и сезона."
+          schema:
+            type: object
+            properties:
+              country:
+                type: string
+                description: "Страна для которой запрашивается информация."
+                example: 'USA'
+              season:
+                type: string
+                description: "Сезон для которого запрашивается информация."
+                example: 'summer'
+              flight_cost:
+                type: number
+                format: float
+                description: "Стоимость авиабилетов для указанной страны и сезона."
+                example: 800.0
+              accommodation_cost:
+                type: number
+                format: float
+                description: "Стоимость проживания на одного человека."
+                example: 150.0
+              food_cost:
+                type: number
+                format: float
+                description: "Стоимость питания на одного человека в день."
+                example: 30.0
+              transport_cost:
+                type: number
+                format: float
+                description: "Стоимость транспорта на одного человека в день."
+                example: 20.0
+        400:
+          description: "Ошибка: Неверная страна или сезон."
+          schema:
+            type: object
+            properties:
+              error:
+                type: string
+                description: "Описание ошибки."
+                example: "Сезон не поддерживается"
+securityDefinitions:
+  apiKey:
+    type: apiKey
+    in: header
+    name: X-API-KEY
+security:
+  - apiKey: []
